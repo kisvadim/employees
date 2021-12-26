@@ -16,8 +16,16 @@ MainWindow::MainWindow(QWidget *parent)
         model = new QSqlTableModel(this, db);
         model->setTable("USERS");
         model->select();
+        model->setHeaderData(1, Qt::Horizontal, "Фамилия", Qt::DisplayRole);
+        model->setHeaderData(2, Qt::Horizontal, "Имя", Qt::DisplayRole);
+        model->setHeaderData(3, Qt::Horizontal, "Отчество", Qt::DisplayRole);
+        model->setHeaderData(4, Qt::Horizontal, "Подразделение", Qt::DisplayRole);
 
         ui->tableView->setModel(model);
+        ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        ui->tableView->setColumnHidden(0, true);
+        ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+        ui->tableView->setSortingEnabled(true);
     }
     else
     {
@@ -27,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    db.close();
     delete ui;
 }
 
@@ -47,5 +56,12 @@ void MainWindow::on_btnRemove_clicked()
 void MainWindow::on_tableView_clicked(const QModelIndex &index)
 {
     currentRow = index.row();
+}
+
+
+void MainWindow::on_btnRefresh_clicked()
+{
+    model->select();
+    ui->tableView->selectRow(currentRow);
 }
 
